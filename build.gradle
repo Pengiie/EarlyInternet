@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+}
+
+group 'dev.penguinz'
+version '1.0-SNAPSHOT'
+
+project.ext.mainClass = 'dev.penguinz.earlyinternet.Entry'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation "dev.penguinz:Sylk:0.1.0"
+}
+
+task run(type: JavaExec){
+    group = "Custom"
+    main = project.mainClass
+    classpath = sourceSets.main.runtimeClasspath
+
+}
+
+task dist(type: Jar) {
+    group = "Custom"
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    manifest {
+        attributes 'Main-Class': project.mainClass
+    }
+
+    from (this.configurations.compileClasspath.collect { it.isDirectory() ? it.getName() : zipTree(it) })
+    from (this.configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) })
+    with jar
+}
